@@ -1,3 +1,5 @@
+# Coding Exercise
+
 Hello, _______________!
 
 Below is a coding exercise that we believe will allow you to show off your amazing development skills!
@@ -9,6 +11,7 @@ We expect it to take a few hours. We would ask that you make commits to a git re
 1. Clone this repository locally and update the first line of this README with your name (so that it reads "Hello, YOUR NAME!"). Commit this change. This will serve as a starting timestamp
 2. Complete the exercise below
 3. Commit progress regularly
+4. When you're done, upload your code to a personal GitHub account and email us the link.
 
 ## The Exercise
 
