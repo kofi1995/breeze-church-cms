@@ -1,33 +1,50 @@
 import React, { Component } from 'react'
-import { TableList } from '../components/people-list'
-import {FilePicker} from '../components/file-picker'
-import { Container } from 'semantic-ui-react';
+import { PeopleList } from '../components/people-list'
+import { FilePicker } from '../components/file-picker'
+import { Container, Button } from 'semantic-ui-react';
+import { bulkUploadPeopleCsv } from '../datasources/people-datasource'
 
 class ResultsList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
-
+      uploadInprogress: false
     };
   }
 
   componentDidMount() {
-    fetch("http://localhost:8000/api/people")
-      .then(response => response.json())
-      .then(data => this.setState({ data: data.data }));
+    this.refresh()
   }
 
-  onFileSelected(event){
-    alert(event.target.files[0].name)
+  async onFileSelected(event) {
     //TODO show upload progres and disable upload button
+    try {
+      this.setState({ uploadInprogress: true })
+      await bulkUploadPeopleCsv(event.target.files[0])
+      this.setState({ uploadInprogress: false })
+      alert("upload successful")
+      this.refresh()
+    } catch (err) {
+      this.setState({ uploadInprogress: false })
+      alert(err.message)
+    }
+  }
+
+  async refresh() {
+
   }
 
   render() {
     return (
       <Container>
-          <FilePicker primary onClick={this.showFilePicker} onFileSelected={this.onFileSelected}>Upload People</FilePicker>
-          <TableList data={this.state.data}></TableList>
+        {this.state.uploadInprogress
+          ?
+          <div><Button loading>Uploading</Button> Uploading People, this might take a while </div>
+          :
+          <FilePicker onClick={this.showFilePicker} onFileSelected={event => this.onFileSelected(event)}>Upload People</FilePicker>
+        }
+        <PeopleList data={this.state.data}></PeopleList>
       </Container>
     );
   }
