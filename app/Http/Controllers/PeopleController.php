@@ -103,4 +103,11 @@ class PeopleController extends Controller
 
         return response()->json(null, 204);
     }
+
+    /***
+     * Bulk upload
+     */
+    public function bulkUPload(Request $request){
+        return response()->json(["message"=>"Success"], 201);
+    }
 }

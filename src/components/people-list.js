@@ -1,12 +1,7 @@
 import React, { Component } from 'react'
 import { Table } from 'semantic-ui-react'
 
-class TableList extends Component {
-    componentDidMount() {
-        fetch("http://localhost:8000/api/people")
-            .then(response => response.json())
-            .then(data => this.setState({ data: data.data }));
-    }
+class PeopleList extends Component {
     render() {
         let data = this.props.data
         return (
@@ -37,4 +32,4 @@ class TableList extends Component {
         );
     }
 }
-export {TableList}
+export {PeopleList}
