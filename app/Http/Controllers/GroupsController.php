@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GroupsCollection;
+use App\Http\Resources\GroupResource;
+use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-use App\Http\Resources\PeopleCollection;
-use App\Http\Resources\PersonResource;
-use App\Models\Person;
-
-class PeopleController extends Controller
+class GroupsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +17,7 @@ class PeopleController extends Controller
      */
     public function index()
     {
-        return new PeopleCollection(Person::all());
+        return new GroupsCollection(Group::all());
     }
 
     /**
@@ -40,15 +39,12 @@ class PeopleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'first_name'    => 'required|max:255',
-            'last_name'     => 'required|max:255',
-            'email_address' => 'required|email',
-            'status'        => Rule::in(['active', 'archived'])
+            'name'    => 'required|string|max:255',
         ]);
 
-        $person = Person::create($request->all());
+        $group = Group::create($request->all());
 
-        return (new PersonResource($person))
+        return (new GroupResource($group))
             ->response()
             ->setStatusCode(201);
     }
@@ -61,7 +57,7 @@ class PeopleController extends Controller
      */
     public function show($id)
     {
-        return new PersonResource(Person::findOrFail($id));
+        return new GroupResource(Group::findOrFail($id));
     }
 
     /**
@@ -84,8 +80,13 @@ class PeopleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $person = Person::findOrFail($id);
-        $person->update($request->all());
+        $group = Group::findOrFail($id);
+
+        $request->validate([
+            'name'    => 'required|string|max:255',
+        ]);
+
+        $group->update($request->all());
 
         return response()->json(null, 204);
     }
@@ -98,8 +99,8 @@ class PeopleController extends Controller
      */
     public function destroy($id)
     {
-        $person = Person::findOrFail($id);
-        $person->delete();
+        $group = Group::findOrFail($id);
+        $group->delete();
 
         return response()->json(null, 204);
     }
@@ -108,7 +109,7 @@ class PeopleController extends Controller
      * Bulk upload
      */
     public function bulkUpload(Request $request){
-        $people = factory(Person::class, 10)->make();
+        $groups = factory(Group::class, 10)->make();
 
 
         return response()->json(["message"=>"Success"], 201);

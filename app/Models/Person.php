@@ -10,6 +10,12 @@ class Person extends Model
         'first_name',
         'last_name',
         'email_address',
-        'status'
+        'status',
+        'group_id'
     ];
+
+    public function group()
+    {
+        return $this->belongsTo('App\Models\Group', '');
+    }
 }
