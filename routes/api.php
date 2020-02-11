@@ -12,10 +12,10 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('people/bulk-upload', 'PeopleController@bulkUpload');
+Route::post('people/bulk-upload', 'PeopleController@bulkUpload');
 
 Route::resource('people', 'PeopleController');
 
-Route::get('groups/bulk-upload', 'GroupsController@bulkUpload');
+Route::post('groups/bulk-upload', 'GroupsController@bulkUpload');
 
 Route::resource('groups', 'GroupsController');
