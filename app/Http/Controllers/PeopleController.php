@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UploadValidationFailedException;
+use App\Imports\PeopleImport;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 use App\Http\Resources\PeopleCollection;
 use App\Http\Resources\PersonResource;
 use App\Models\Person;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PeopleController extends Controller
 {
@@ -18,7 +21,8 @@ class PeopleController extends Controller
      */
     public function index()
     {
-        $people = factory(Person::class, 10)->make();
+        $people = Person::get();
+
         return new PeopleCollection($people);
     }
 
@@ -44,7 +48,7 @@ class PeopleController extends Controller
             'first_name'    => 'required|max:255',
             'last_name'     => 'required|max:255',
             'email_address' => 'required|email',
-            'status'        => Rule::in(['active', 'archived'])
+            'status'        => ['required', Rule::in(['active', 'archived'])],
         ]);
 
         $person = Person::create($request->all());
@@ -86,6 +90,16 @@ class PeopleController extends Controller
     public function update(Request $request, $id)
     {
         $person = Person::findOrFail($id);
+
+        $request->validate([
+            'first_name'    => 'required_without_all:last_name,email_address,status,group_id|max:255',
+            'last_name'     => 'required_without_all:first_name,email_address,status,group_id|max:255',
+            'email_address' => 'required_without_all:first_name,last_name,status,group_id|email',
+            'status'        => ['required_without_all:first_name,last_name,email_address,group_id', Rule::in(['active', 'archived'])],
+            'group_id'      => 'required_without_all:first_name,last_name,email_address,status|integer|exists:groups,id',
+        ]);
+
+
         $person->update($request->all());
 
         return response()->json(null, 204);
@@ -109,9 +123,27 @@ class PeopleController extends Controller
      * Bulk upload
      */
     public function bulkUpload(Request $request){
-        $people = factory(Person::class, 10)->make();
+       $request->validate([
+            'file' => 'required|file|mimetypes:application/vnd.ms-excel,text/plain,text/csv,text/tsv',
+       ]);
+        $error = null;
+       try {
+           Excel::import(
+               new PeopleImport,
+               $request->file('file'),
+               null,
+               \Maatwebsite\Excel\Excel::CSV
+           );
+       }
+       catch(\Exception $e) {
+           $error = $e->getMessage();
+       }
 
+       if($error) {
+           return response()->json(["message" => $error], 400);
+       }
 
-        return response()->json(["message"=>"Success"], 201);
+       return response()->json(["message"=>"Success"], 201);
     }
+
 }

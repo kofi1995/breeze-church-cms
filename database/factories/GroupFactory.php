@@ -8,6 +8,6 @@ use App\Models\Group;
 
 $factory->define(Group::class, function (Faker $faker) {
     return [
-        'name' => $faker->name . ' Group',
+        'group_name' => $faker->name . ' Group',
     ];
 });

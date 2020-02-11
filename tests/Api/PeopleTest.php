@@ -2,10 +2,14 @@
 
 namespace Tests\Feature;
 
+
 use Tests\TestCase;
 use App\Models\Person;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestData;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 
 class PeopleControllerTest extends TestCase
 {
@@ -89,4 +93,86 @@ class PeopleControllerTest extends TestCase
         $response->assertStatus(404);
 
     }
+
+    public function testBulkUpload() {
+        Storage::fake('testcsv');
+
+        $testData = new TestData;
+
+        Storage::put('testcsv/people.csv', $testData->generateCSV($testData::peopleCSVData()));
+
+        $file = storage_path('app/testcsv/people.csv');
+
+        $testFile = new UploadedFile ($file, 'people.csv', 'text/csv', 0, true);
+
+
+        $response = $this->json('POST', '/api/people/bulk-upload', [
+            'file' => $testFile,
+        ]);
+
+        $csvElement = collect($testData->parseCSV($file))->random();
+
+        $this->assertDatabaseHas('people', [
+            'email_address' => $csvElement['email_address'],
+            'first_name' => $csvElement['first_name'],
+            'last_name' => $csvElement['last_name'],
+        ]);
+
+        $response->assertStatus(201);
+    }
+
+    public function testBulkUploadDiffColumnOrder() {
+        Storage::fake('testcsv');
+
+        $testData = new TestData;
+
+        Storage::put('testcsv/people.csv', $testData->generateCSV($testData::peopleCSVData2()));
+
+        $file = storage_path('app/testcsv/people.csv');
+
+        $testFile = new UploadedFile ($file, 'people.csv', 'text/csv', 0, true);
+
+
+        $response = $this->json('POST', '/api/people/bulk-upload', [
+            'file' => $testFile,
+        ]);
+
+        $csvElement = collect($testData->parseCSV($file))->random();
+
+        $this->assertDatabaseHas('people', [
+            'email_address' => $csvElement['email_address'],
+            'first_name' => $csvElement['first_name'],
+            'last_name' => $csvElement['last_name'],
+        ]);
+
+        $response->assertStatus(201);
+    }
+
+    public function testBulkUploadValidationFailed() {
+        $response = $this->json('POST', '/api/people/bulk-upload', [
+            'file' => UploadedFile::fake()->image('test.jpg'),
+        ]);
+        $response->assertStatus(422);
+    }
+
+    public function testBulkUploadRequiredColumnsNotInCSV() {
+        Storage::fake('testcsv');
+
+        $testData = new TestData;
+
+        Storage::put('testcsv/people.csv', $testData->generateCSV($testData::groupCSVData()));
+
+        $file = storage_path('app/testcsv/people.csv');
+
+        $testFile = new UploadedFile ($file, 'people.csv', 'text/csv', 0, true);
+
+
+        $response = $this->json('POST', '/api/people/bulk-upload', [
+            'file' => $testFile,
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+
 }

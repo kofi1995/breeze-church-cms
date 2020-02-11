@@ -6,8 +6,8 @@ import { updatePerson } from '../datasources/people-datasource.js'
 class PeopleList extends Component {
 
     async updateGroup(person, new_group) {
-        let previous_group = person.group
-        person.group = new_group
+        let previous_group = person.group_id
+        person.group_id = new_group
         try {
             await updatePerson(person)
         } catch (e) {
@@ -20,7 +20,7 @@ class PeopleList extends Component {
 
     render() {
         let data = this.props.data,
-            groups = [{ name: "No Group" }, ...this.props.groups]
+            groups = [{ id: 0, group_name: "No Group" }, ...this.props.groups]
         return (
             <Table celled padded>
                 <Table.Header>
@@ -42,7 +42,7 @@ class PeopleList extends Component {
                                     <Table.Cell singleLine>{person.email_address}</Table.Cell>
                                     <Table.Cell singleLine>{person.status}</Table.Cell>
                                     <Table.Cell singleLine textAlign='center'>
-                                        <GroupPicker groups={groups} current_value={person.group} onGroupSelected={(group) => this.updateGroup(person, group)}></GroupPicker>
+                                        <GroupPicker groups={groups} current_value={person.group_id} onGroupSelected={(group) => this.updateGroup(person, group)}></GroupPicker>
                                     </Table.Cell>
                                 </Table.Row>
                             );

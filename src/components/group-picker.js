@@ -9,11 +9,11 @@ class GroupPicker extends React.Component {
             {
                 groups.map((group, index) => {
                     return (
-                        current_value === group.name
+                        current_value === group.id
                             ?
-                            <option key={index} selected="selected">{group.name}</option>
+                            <option key={index} selected="selected" value={group.id}>{group.group_name}</option>
                             :
-                            <option key={index}>{group.name}</option>)
+                            <option key={index} value={group.id}>{group.group_name}</option>)
                 })
             }
         </select>
@@ -21,4 +21,4 @@ class GroupPicker extends React.Component {
 
 }
 
-export {GroupPicker} 
+export {GroupPicker}
