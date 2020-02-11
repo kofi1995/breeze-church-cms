@@ -7,14 +7,14 @@ class FilePicker extends Component {
         this.state = {}
     }
 
-    showFilePicker(event, data) {
-        document.getElementById("file-picker").click()
+    showFilePicker() {
+        document.getElementById(this.props.id).click()
     }
 
     render() {
         return <div>
-            <Button primary onClick={this.showFilePicker}>Upload People</Button>
-            <input type="file" hidden id="file-picker" onChange={this.props.onFileSelected}></input>
+            <Button primary onClick={this.showFilePicker.bind(this)}>{this.props.name}</Button>
+            <input type="file" hidden id={this.props.id} onChange={this.props.onFileSelected}></input>
         </div>
 
     }
