@@ -18,7 +18,8 @@ class PeopleController extends Controller
      */
     public function index()
     {
-        return new PeopleCollection(Person::all());
+        $people = factory(Person::class, 10)->make();
+        return new PeopleCollection($people);
     }
 
     /**

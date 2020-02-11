@@ -17,7 +17,8 @@ class GroupsController extends Controller
      */
     public function index()
     {
-        return new GroupsCollection(Group::all());
+        $groups = factory(Group::class, 10)->make();
+        return new GroupsCollection($groups);
     }
 
     /**
