@@ -2,10 +2,11 @@
 
 namespace App\Imports;
 
-use App\Exceptions\UploadValidationFailedException;
+use App\Exceptions\UploadColumnsNotFoundException;
 use App\Models\Group;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Validator;
 
 class GroupImport implements ToModel, WithHeadingRow
 {
@@ -18,14 +19,22 @@ class GroupImport implements ToModel, WithHeadingRow
         $keys = ['id', 'group_name'];
 
         if(!$this->validateHeaderExists($keys, $row)) {
-            throw new UploadValidationFailedException(implode(",", $keys) . ' keys do not exist in the uploaded CSV file');
+            throw new UploadColumnsNotFoundException(implode(",", $keys) . ' keys do not exist in the uploaded CSV file');
         }
-        return Group::updateOrCreate(
-            ['id' => $row['id']],
-            [
-                'group_name' => $row['group_name'],
-            ]
-        );
+
+        $validator = Validator::make($row, [
+            $keys[0]            => 'required|integer',
+            $keys[1]            => 'required|string|max:255',
+        ]);
+
+        if (!$validator->fails()) {
+            return Group::updateOrCreate(
+                ['id' => $row['id']],
+                [
+                    'group_name' => $row['group_name'],
+                ]
+            );
+        }
     }
 
     private function validateHeaderExists(array $keys, array $array) {

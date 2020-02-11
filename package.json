@@ -7,6 +7,7 @@
     "enzyme-adapter-react-16": "^1.14.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",
     "react-test-renderer": "^16.8.6",
     "semantic-ui-react": "^0.87.3"

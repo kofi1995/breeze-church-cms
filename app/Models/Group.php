@@ -11,8 +11,8 @@ class Group extends Model
         'group_name',
     ];
 
-    public function users()
+    public function people()
     {
-        return $this->hasMany('App\Models\User', 'group_id');
+        return $this->hasMany('App\Models\Person', 'group_id');
     }
 }

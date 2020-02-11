@@ -43,6 +43,17 @@ class TestData
         ];
     }
 
+    public static function peopleCSVData3 () {
+        return  [
+            [ 'status', 'id', 'first_name', 'last_name', 'email_address', ],
+            [ 'active', 'test', "Alex", "Ortiz-Rosado", "alex@breezechms.com", ],
+            [ "archived", 'test', "Jon", "VerLee", "jon@breezechms.com"],
+            [ "active", 3, "Fred", "Flintstone", "fredflintstone@example.com" ],
+            [ "active", 4, "Marie", "Bourne", "mbourne@example.com"],
+            [ "active", 5, "Wilma", "Flintstone", "wilmaflinstone@example.com"],
+        ];
+    }
+
     public static function groupCSVData () {
         $data =  [
             ['id', 'group_name'],

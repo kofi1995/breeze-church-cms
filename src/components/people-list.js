@@ -20,7 +20,7 @@ class PeopleList extends Component {
 
     render() {
         let data = this.props.data,
-            groups = [{ id: 0, group_name: "No Group" }, ...this.props.groups]
+            groups = [{ id: 0, group_name: "No Group"}, ...this.props.groups]
         return (
             <Table celled padded>
                 <Table.Header>
